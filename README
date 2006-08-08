@@ -1,0 +1,45 @@
+Music Notify README
+===================
+
+What is..?
+
+ Music notify is a simple hack that displays a popup/toast/thingie
+ every time there is a change relating to your music. For example,
+ volume changes, song changes, play/pause, etc are supported.
+
+What it isn't!
+
+ Music notify is completely passive! It is not meant to get in the way,
+ and drive you nuts... Therefore, interactivity is not planned.
+
+Requirements:
+
+ Music notify uses libnotify <www.galago-project.org> for the
+ display of the popups. As such, it is a dependency.
+ 
+Available Backends:
+
+ The following music-player backends (modules) are available:
+
+ * mpd	- for the music player daemon
+ * xmms	- for xmms and derivatives/cousins/etc
+
+Contact:
+
+ Please don't hesitate to contact Lucas Martin-King at:
+
+ <lmartinking (at) gmail (dot) com>
+ 
+ regarding this program.
+
+ Bug reports, feature requests, free stuff, patches, and
+ constructive criticism are welcome! =)
+
+Legal wrangling:
+
+ "Music notify" is licenced under the GNU GPL version 2.
+ This program is (c)2006 Lucas Martin-King.
+
+ For more information regarding the GPL, see:
+ 
+ <http://www.gnu.org/copyleft/gpl.html>
