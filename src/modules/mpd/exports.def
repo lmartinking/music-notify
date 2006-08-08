@@ -1,0 +1,4 @@
+mpd_init
+mpd_quit
+mpd_check
+mpd_get

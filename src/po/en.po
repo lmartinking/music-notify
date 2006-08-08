@@ -1,0 +1,258 @@
+# music-notify - Ye Olde English Translation
+# Copyright (C) 2006 Lucas Martin-King
+# This file is distributed under the same license as the music-notify package.
+# Lucas Martin-King <lmartinking@gmail.com., 2006.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: music-notify 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-06-19 15:43+1000\n"
+"PO-Revision-Date: 2006-06-19 15:43+1000\n"
+"Last-Translator: Lucas Martin-King <lmartinking@gmail.com>\n"
+"Language-Team: English <en@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#
+# backend.c - module loader, etc
+#
+# Low priority
+#: backend.c:54
+#, c-format
+msgid "Error fetching magic"
+msgstr ""
+
+#: backend.c:59
+#, c-format
+msgid "Magic incorrect! Was %d, Should be: %d\n"
+msgstr ""
+
+#: backend.c:71
+#, c-format
+msgid "Couldn't get real function name!\n"
+msgstr ""
+
+#: backend.c:97
+#, c-format
+msgid "Couldn't get module name!\n"
+msgstr ""
+
+#: backend.c:102
+#, c-format
+msgid "Couldn't get module version!\n"
+msgstr ""
+
+#: backend.c:107
+#, c-format
+msgid "Couldn't get module author!\n"
+msgstr ""
+
+#: backend.c:112
+#, c-format
+msgid "Couldn't get module copyright!\n"
+msgstr ""
+
+#: backend.c:124
+#, c-format
+msgid "Couldn't get module functions!\n"
+msgstr ""
+
+#: backend.c:229
+#, c-format
+msgid "Using '%s' for backend module\n"
+msgstr ""
+
+#: backend.c:232
+#, c-format
+msgid "Couldn't load backend module!\n"
+msgstr ""
+
+#: backend.c:236
+#, c-format
+msgid ""
+"\n"
+"Module Info:\n"
+msgstr ""
+
+#: backend.c:237
+#, c-format
+msgid " Name:       %s\n"
+msgstr ""
+
+#: backend.c:238
+#, c-format
+msgid " Version:    %s\n"
+msgstr ""
+
+#: backend.c:239
+#, c-format
+msgid " Author:     %s\n"
+msgstr ""
+
+#: backend.c:240
+#, c-format
+msgid " Copyright:  %s\n"
+msgstr ""
+
+#: backend.c:243
+#, c-format
+msgid "Option string: %s\n"
+msgstr ""
+
+#
+# music-notify.c - main program
+#
+# HIGH PRIORITY!
+#
+#: music-notify.c:21
+#, c-format
+msgid "Couldn't init popups!\n"
+msgstr ""
+
+#: music-notify.c:24
+#, c-format
+msgid "Initialised popups...\n"
+msgstr ""
+
+#: music-notify.c:29
+#, c-format
+msgid "Couldn't init backend!\n"
+msgstr ""
+
+#: music-notify.c:32
+#, c-format
+msgid "Initialised backend...\n"
+msgstr ""
+
+#: music-notify.c:38
+#, c-format
+msgid "Couldn't shutdown backend?!?\n"
+msgstr ""
+
+#: music-notify.c:41
+#, c-format
+msgid "Shutdown backend...\n"
+msgstr ""
+
+#: music-notify.c:67 music-notify.c:123 music-notify.c:178
+msgid "Music Error:"
+msgstr ""
+
+#: music-notify.c:67
+msgid "Couldn't get current song info!"
+msgstr ""
+
+#: music-notify.c:90
+#, c-format
+msgid "Volume is now at %d%%"
+msgstr ""
+
+#: music-notify.c:92
+#, c-format
+msgid "Volume is muted"
+msgstr ""
+
+#: music-notify.c:105
+msgid "Volume Change:"
+msgstr ""
+
+#: music-notify.c:123
+msgid "Couldn't get playstate!"
+msgstr ""
+
+#: music-notify.c:129
+msgid "Music: Error"
+msgstr ""
+
+#: music-notify.c:129
+msgid "Couldn't get song info!"
+msgstr ""
+
+#: music-notify.c:138
+msgid "Music Stopped:"
+msgstr ""
+
+#: music-notify.c:140
+msgid "Music Playing:"
+msgstr ""
+
+#: music-notify.c:142
+msgid "Music Paused:"
+msgstr ""
+
+#: music-notify.c:144
+msgid "Music Unknown:"
+msgstr ""
+
+#: music-notify.c:178
+msgid "Disconnected!"
+msgstr ""
+
+#
+# popup.c - basic popup stuff
+#
+# Low priority
+#: popup.c:14
+#, c-format
+msgid "popup_init: appname not specified\n"
+msgstr ""
+
+#: popup.c:19
+#, c-format
+msgid "Failed to init libnotify\n"
+msgstr ""
+
+#: popup.c:115
+#, c-format
+msgid ""
+"\n"
+"Popup:\n"
+msgstr ""
+
+#: popup.c:116
+#, c-format
+msgid " Title:    %s\n"
+msgstr ""
+
+#: popup.c:117
+#, c-format
+msgid " Message:  %s\n"
+msgstr ""
+
+#: popup.c:118
+#, c-format
+msgid " Category: %s\n"
+msgstr ""
+
+#: popup.c:119
+#, c-format
+msgid " Icon:     %s\n"
+msgstr ""
+
+#
+# show-song.c - displaying a song
+#
+# FAIRLY HIGH PRIORITY!
+#: show-song.c:27
+msgid "Unknown Length"
+msgstr ""
+
+#: show-song.c:36
+#, c-format
+msgid "Length:\t%d:%02d"
+msgstr ""
+
+#: show-song.c:66
+msgid "Album"
+msgstr ""
+
+#: show-song.c:66
+msgid "Artist"
+msgstr ""
+
+#: show-song.c:79
+msgid "Current Song:"
+msgstr ""

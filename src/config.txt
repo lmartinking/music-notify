@@ -1,0 +1,14 @@
+# Auto-generated config file.
+# Generated: Tue Jun 20 13:31:44 2006
+
+backend.module = mpd
+backend.optstring = mpd_host=192.168.1.1 mpd_port=6600
+icon.volume.low = /usr/share/icons/Tango/48x48/status/audio-volume-low.png
+icon.volume.med = /usr/share/icons/Tango/48x48/status/audio-volume-medium.png
+icon.volume.high = /usr/share/icons/Tango/48x48/status/audio-volume-high.png
+icon.volume.mute = /usr/share/icons/Tango/48x48/status/audio-volume-muted.png
+icon.song = /usr/share/icons/Tango/48x48/mimetypes/sound.png
+icon.song.play = /usr/share/icons/Tango/22x22/actions/player_play.png
+icon.song.stop = /usr/share/icons/Tango/22x22/actions/player_stop.png
+icon.song.pause = /usr/share/icons/Tango/22x22/actions/player_pause.png
+icon.song.unknown = /usr/share/icons/Tango/22x22/emblems/emblem_system.png
