@@ -132,7 +132,7 @@ Module  * module_load(const char *filename)
 
 //#ifdef __TEST__
 
-void param_set(Module_Param *p, const char *name, const char *value)
+static void param_set(Module_Param *p, const char *name, const char *value)
 {
 	if (p) {
 		if (p->name)
@@ -144,8 +144,9 @@ void param_set(Module_Param *p, const char *name, const char *value)
 
 /*** END MODULE STUFF ***/
 
-Module *back_end = NULL;
+static Module *back_end = NULL;
 
+static
 Module_Param **
 parse_optstring(const char *options)
 {
@@ -197,7 +198,7 @@ parse_optstring(const char *options)
 	return parms;
 }
 
-int parms_len(Module_Param **parms)
+static int parms_len(Module_Param **parms)
 {
 	Module_Param *p;
 	int i = 0;
