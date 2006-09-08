@@ -112,12 +112,12 @@ int	popup_show(Popup *p)
 	int ret;
 	char *body;
 
-	INFO(_("\nPopup:\n"));
-	INFO(_(" Title:    %s\n"), p->title);
-	INFO(_(" Message:  %s\n"), p->mesg);
-	INFO(_(" Category: %s\n"), p->category);
-	INFO(_(" Icon:     %s\n"), p->icon);
-	INFO("\n");
+	DEBUG(_("\nPopup:\n"));
+	DEBUG(_(" Title:    %s\n"), p->title);
+	DEBUG(_(" Message:  %s\n"), p->mesg);
+	DEBUG(_(" Category: %s\n"), p->category);
+	DEBUG(_(" Icon:     %s\n"), p->icon);
+	DEBUG("\n");
 
 	if (P_MESSAGE(p))
 		body = filter_string(P_MESSAGE(p));
