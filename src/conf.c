@@ -1,6 +1,7 @@
 /* conf.c - configuration manager */
 
 #include <stdlib.h>
+#include <errno.h>
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
@@ -28,6 +29,8 @@ typedef struct Config_Property {
 } Config_Property;
 
 static Config_Property *root = NULL;
+
+#define ROOT_NODE	"__root__"
 
 /* Internals */
 static void
@@ -60,6 +63,12 @@ prop_create(const char *name)
 	Config_Property *np;
 
 	np = malloc(sizeof(Config_Property));
+
+	if (np == NULL) {
+		ERROR("Couldn't allocate memory: %s ; Seppuku!\n", strerror(errno));
+		DIE();
+	}
+	
 	memset(np, 0, sizeof(Config_Property));
 	
 	np->name = strdup(name);
@@ -176,7 +185,7 @@ prop_set_data(Config_Property *p, const void *data, const int len)
 				if (p->value.data.void_d == NULL)
 					p->value.data.void_d = calloc(len, 1);
 				else
-					realloc(p->value.data.void_d, len);
+					p->value.data.void_d = realloc(p->value.data.void_d, len);
 			} break;
 
 		case	TYPE_NONE:
@@ -189,7 +198,7 @@ prop_set_data(Config_Property *p, const void *data, const int len)
 int
 config_init(void)
 {
-	root = prop_create("__root__");
+	root = prop_create(ROOT_NODE);
 	root->next = NULL;
 
 	return 1;
@@ -266,6 +275,18 @@ config_get_value_string(const char *key)
 		return p->value.data.str_d;
 }
 
+float
+config_get_value_float(const char *key)
+{
+	Config_Property *p;
+
+	p = prop_get_fromkey(key, 0);
+	if (!p || p->value.type != TYPE_FLOAT) {
+		return 0.0;
+	} else
+		return p->value.data.float_d;
+}
+
 void *
 config_get_value_data(const char *key, int *len)
 {
@@ -306,26 +327,57 @@ is_number(const char *s)
 	return 1;
 }
 
+static int
+is_text(const char *s)
+{
+	int i;
+
+	for (i = 0; i < strlen(s); i++) {
+		/* is this pedantic enough? */
+		if ( ! (isalnum(s[i]) || isspace(s[i]) || ispunct(s[i]) ))
+			return 0;
+	}
+
+	return 1;
+}
+
 int
 config_load_file(const char *filename)
 {
 	FILE *f;
+	char *fn;
 	char linebuf[200];
 	int lineno = 0;
 
 	if (!filename)
 		return 0;
+
+	if (filename[0] == '~' && filename[1] == '/') {
+		char path[250];
+		strcpy(path, getenv("HOME"));
+		filename++;
+		strcat(path, filename);
+		fn = path;
+		DEBUG("Path expanded to %s\n", path);
+	} else {
+		fn = (char *)filename;
+	}
 	
-	if ((f = fopen(filename, "r")) == NULL) {
+	if ((f = fopen(fn, "r")) == NULL) {
 		ERROR("Couldn't open config file: %s\n", filename);
 		return 0;
 	}
 
-	INFO("Opened %s\n", filename);
+	INFO("Opened config file: %s\n", filename);
 
 	while (fgets(linebuf, 198, f)) {
 		char key[150], value[150];
 		char *v;
+
+		if (!is_text(linebuf)) {
+			ERROR("Config file contains non-text characters! Maybe it's a binary?\n");
+			return 0;
+		}
 		
 		lineno++;
 
@@ -345,6 +397,8 @@ config_load_file(const char *filename)
 			value[strlen(v) - 1] = '\0'; /* a little hackish */
 		}
 
+		DEBUG("key: '%s' value: '%s'\n", key, value);
+
 		if (is_number(value)) {	
 			int i = atoi(value);
 			if (!config_set_value_integer(key, i)) {
@@ -362,7 +416,7 @@ config_load_file(const char *filename)
 	return 1;
 }
 
-static char *
+static const char *
 print_time(void)
 {
 	time_t now;
@@ -376,7 +430,9 @@ config_write_file(const char *filename)
 	FILE *f;		
 	Config_Property *p;
 
-	if ((f = fopen(filename, "w")) == NULL) {
+	if (strcmp(filename, "stdout") == 0) {
+		f = stdout;
+	} else if ((f = fopen(filename, "w")) == NULL) {
 		ERROR("Couldn't open config file for writing: %s\n", filename);
 		return 0;
 	}
@@ -387,7 +443,8 @@ config_write_file(const char *filename)
 	for (p = root; p != NULL; p = p->next) {
 		char *key;
 		
-		if (strcmp(p->name, "__root__") == 0) continue;	/* ignore root */
+		if (strcmp(p->name, ROOT_NODE) == 0) continue;	/* ignore root */
+		if (p->name[0] == '.') continue; /* ignore names starting with . */
 
 		key = p->name;
 
@@ -415,7 +472,8 @@ config_write_file(const char *filename)
 		}
 	}
 
-	fclose(f);
+	if (f != stdout)
+		fclose(f);
 
 	return 1;
 }
