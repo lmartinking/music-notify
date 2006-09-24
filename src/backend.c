@@ -32,7 +32,7 @@ mod_load(const char *filename)
 	void *handle;
 	int flags;
 
-	flags =	 RTLD_LAZY;
+	flags =	 RTLD_NOW;
 	flags |= RTLD_GLOBAL;
 
 	if ((handle = dlopen(filename, flags)) == NULL) {
@@ -235,14 +235,14 @@ int music_init(const char *backend, const char *options)
 		return 0;
 	}
 	
-	INFO(_("\nModule Info:\n"));
-	INFO(_(" Name:       %s\n"), back_end->name);
-	INFO(_(" Version:    %s\n"), back_end->version);
-	INFO(_(" Author:     %s\n"), back_end->author);
-	INFO(_(" Copyright:  %s\n"), back_end->copyright);
-	INFO("\n");
+	DEBUG(_("\nModule Info:\n"));
+	DEBUG(_(" Name:       %s\n"), back_end->name);
+	DEBUG(_(" Version:    %s\n"), back_end->version);
+	DEBUG(_(" Author:     %s\n"), back_end->author);
+	DEBUG(_(" Copyright:  %s\n"), back_end->copyright);
+	DEBUG("\n");
 
-	INFO(_("Option string: %s\n"), options);
+	DEBUG(_("Option string: %s\n"), options);
 	opts = parse_optstring(options);
 
 	ret = (back_end->init)(parms_len(opts), opts);
