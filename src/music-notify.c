@@ -1,5 +1,8 @@
 /* music-notify.c - main program */
 
+#include <unistd.h>
+#include <string.h>
+
 #include "utils.h"
 #include "backend.h"
 #include "popup.h"
@@ -7,33 +10,15 @@
 
 #include "conf.h"
 
+int debug = 0;
 int music_notify_main(void);
 
-#define PACKAGE		"music-notify"
-#define LOCALEDIR	"./"
+#include "defaults.h" /* icon defaults */
+#include "config.h"
 
-#define DEFAULT_ICON_VOL_MUTE	"/usr/share/icons/Tango/48x48/status/audio-volume-muted.png"
-#define DEFAULT_ICON_VOL_LOW	"/usr/share/icons/Tango/48x48/status/audio-volume-low.png"
-#define DEFAULT_ICON_VOL_MED	"/usr/share/icons/Tango/48x48/status/audio-volume-medium.png"
-#define DEFAULT_ICON_VOL_HIGH	"/usr/share/icons/Tango/48x48/status/audio-volume-high.png"
-
-#define DEFAULT_ICON_PLAY	"/usr/share/icons/Tango/22x22/actions/player_play.png"
-#define DEFAULT_ICON_PAUSE	"/usr/share/icons/Tango/22x22/actions/player_pause.png"
-#define DEFAULT_ICON_STOP	"/usr/share/icons/Tango/22x22/actions/player_stop.png"
-#define DEFAULT_ICON_UNKNOWN	"/usr/share/icons/Tango/22x22/emblems/emblem_system.png"
-#define DEFAULT_ICON_SONG	"/usr/share/icons/Tango/48x48/mimetypes/sound.png"
-
-int main(int argc, char **argv)
-{
-	/* gettext fun */
-	//setlocale(LC_MESSAGES, "");	
-	//bindtextdomain(PACKAGE, LOCALEDIR);
-	//textdomain(PACKAGE);
-
-	config_init();
-
+static void config_set_defaults () {
 	/* backend defaults */
-	config_set_default("backend.module", TYPE_STRING, "mpd");
+	config_set_default("backend.module",	TYPE_STRING, "mpd");
 	config_set_default("backend.optstring", TYPE_STRING, "mpd_host=192.168.1.1 mpd_port=6600");
 
 	/* icon defaults */
@@ -49,9 +34,140 @@ int main(int argc, char **argv)
 	config_set_default("icon.song.pause",	TYPE_STRING,	DEFAULT_ICON_PAUSE);
 	config_set_default("icon.song.unknown",	TYPE_STRING,	DEFAULT_ICON_UNKNOWN);
 
-	config_write_file("config.txt");
+	/* private */
+	config_set_default(".config.file",	TYPE_STRING,	CONFIG_FILE);
+	config_set_default(".config.outfile",	TYPE_STRING,	"stdout");
+	config_set_default(".config.writecfg",	TYPE_INTEGER,	0);
+	
+	config_set_default(".program.name",	TYPE_STRING,	PROG_NAME);
+	config_set_default(".program.unixname",	TYPE_STRING,	PROGRAM);
+	config_set_default(".program.class",	TYPE_STRING,	PROG_CLASS);
 
-	if (!popup_init("Music Notify", "x-music-notify")) {
+	return;
+}
+
+static void print_help(void)
+{
+	printf("Usage: %s [OPTION]...\n", PROGRAM);
+	printf("%s.\n", PROG_DESC);
+	
+	printf("\n");
+
+	printf(" --debug, -d		Print debugging messages to stderr\n"); 
+	printf(" --config, -c <file>	Use <file> for configuration\n");	
+	
+	printf("\n");
+	
+	printf(" --help, -h		Show this message\n");
+	printf(" --version, -v		Show version information\n");
+
+	printf("\n");
+
+	printf("Report bugs to %s.\n", AUTHOR_EMAIL);
+}
+
+static void print_version(void)
+{
+	printf("%s (%s) %s\n", PROGRAM, PROG_NAME, PROG_VERSION);
+	printf("%s.\n", COPYSTRING);	
+	printf("%s", DISCLAIMER);
+}
+
+/* maybe use getopt? */
+static void parse_commandline(int argc, char **argv)
+{
+	int i;
+	char *arg;
+
+	for (i = 0; i < argc; i++) {
+		arg = argv[i];
+
+		if (arg[0] != '-') continue;
+		if (arg[0] == '-' && arg[1] == '-') arg++;
+	
+		#define ARG_IS(s)		((strcmp(arg, s) == 0))
+		#define NEXT_ARG_EXISTS()	((i < (argc - 1)) ? 1 : 0)
+		#define NEXT_ARG()		argv[i+1]
+		#define NEXT_ARG_NOTFLAG()	(NEXT_ARG_EXISTS() && NEXT_ARG()[0] != '-')
+		#define GET_NEXT_ARG()		((i < (argc - 1)) ? argv[++i] : "<error>") /* INCREMENTS i !!! */
+		
+		if (ARG_IS("-debug") || ARG_IS("-d")) {
+			debug = 1;
+			DEBUG("-debug set\n");
+		} else
+		if (ARG_IS("-config") || ARG_IS("-c")) {
+			DEBUG("-config set\n");
+			if (NEXT_ARG_NOTFLAG()) {
+				config_set_value_string(".config.file", GET_NEXT_ARG());
+			} else {
+				print_help();
+				ERROR("\nError: -config requires a valid argument\n");
+				DIE();
+			}
+		} else
+		if (ARG_IS("-print-default-config") || ARG_IS("-p")) {
+			char *outfile;
+
+			DEBUG("-print-default-config set\n");
+			
+			config_set_value_integer(".config.writecfg", 1);
+
+			if (NEXT_ARG_NOTFLAG())  {
+				outfile = GET_NEXT_ARG();
+			} else {
+				outfile = "stdout";
+			}
+
+			config_set_value_string(".config.outfile", outfile);
+		} else 
+		if (ARG_IS("-version") || ARG_IS("-v")) {
+			DEBUG("-version\n");		
+			print_version();
+			EXIT();
+		} else
+		if (ARG_IS("-help") || ARG_IS("-h")) {
+			DEBUG("-help\n");	
+			print_help();
+			EXIT();
+		} else {
+			DEBUG("unknown arg: %s\n", arg);
+		}
+	}
+	
+	return;
+}
+
+int main(int argc, char **argv)
+{
+
+#ifdef NLS
+	/* gettext fun */
+	setlocale(LC_MESSAGES, "");	
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+#endif
+
+	config_init();
+	config_set_defaults();
+
+	parse_commandline(argc, argv);
+
+	if (config_get_value_integer(".config.writecfg")) {
+		if (!config_write_file(config_get_value_string(".config.outfile"))) {
+			ERROR(_("Could not write config file!\n"));
+		} else {
+			EXIT();
+		}
+	}
+
+	if (!config_load_file(config_get_value_string(".config.file"))) {
+		ERROR(_("Couldn't read config file!\n"));
+		DIE();
+	} else {
+		INFO(_("Read config file.\n"));
+	}
+
+	if (!popup_init(config_get_value_string(".program.name"), config_get_value_string(".program.class"))) {
 		INFO(_("Couldn't init popups!\n"));
 		DIE();
 	} else {
@@ -82,6 +198,19 @@ void show_error(const char *title, const char *mesg)
 	Popup *p;
 
 	p = popup_new_stock(STOCK_ERROR);
+
+	popup_set_title(p, title);
+	popup_set_mesg(p, mesg);
+
+	popup_show(p);
+	popup_destroy(p);
+}
+
+void show_message(const char *title, const char *mesg)
+{
+	Popup *p;
+
+	p = popup_new_stock(STOCK_INFO);
 
 	popup_set_title(p, title);
 	popup_set_mesg(p, mesg);
@@ -199,7 +328,7 @@ void show_current_playstate()
 int music_notify_main(void)
 {
 	int running = 1;
-	
+
 	show_current_song();	
 
 	while (running) {
@@ -226,4 +355,6 @@ int music_notify_main(void)
 
 		sleep(1);
 	}
+
+	return 0;
 }
