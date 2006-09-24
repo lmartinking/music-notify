@@ -80,7 +80,35 @@ Popup * popup_new_stock(Popup_Stock_Type t)
 	return p;
 }
 
+struct esc {
+	char c;
+	char *e;
+};
+
+struct esc e_tbl[] = {
+	{ '&', "&amp;" },
+	{ 0, "" }
+};
+
+static char s[2];
+
+static
+const char * filter_char(const char c)
+{
+	int i = 0;	
+	
+	while (e_tbl[i].c != 0) {
+		if (e_tbl[i].c == c) return e_tbl[i].e;
+		i++;
+	}
+
+	s[0] = c; s[1] = '\0';
+
+	return s;
+}
+
 /* XXX: This needs to be much better! */
+static
 char *
 filter_string(const char *src)
 {
@@ -94,13 +122,8 @@ filter_string(const char *src)
 
 	for (i = 0; i < strlen(src) ; i++) {
 		char c = src[i];
-		
-		if (c == '&')
-			strcat(buf, "&amp;");	
-		else {
-			char tmp[2] = {c, '\0' };
-			strcat(buf, tmp);
-		}
+	
+		strcat(buf, filter_char(c));
 	}
 
 	return strdup(buf);
