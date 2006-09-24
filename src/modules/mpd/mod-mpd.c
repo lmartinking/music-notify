@@ -1,6 +1,7 @@
 /* mod-mpd.c - MPD backend module =) */
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #define __MODULE__ /* Hi, I'm a module! */
 #include "backend.h"
@@ -170,7 +171,7 @@ int mpd_getsonginfo(Music_Song *s)
 	i = mpd_getNextInfoEntity(conn);
 
 	if (i && i->type == MPD_INFO_ENTITY_TYPE_SONG) {
-		INFO("Song info...\n");
+		DEBUG("Song info\n");
 		sng = i->info.song;
 
 #define SAFE_CLONE(src, dest)	if (src) { strcpy(dest, src); } else { strcpy(dest, "Unknown"); }
