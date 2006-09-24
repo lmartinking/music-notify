@@ -19,10 +19,11 @@ int		config_set_value_string(const char *key, const char *newstr);
 int		config_set_value_integer(const char *key, const int newint);
 int		config_set_value_data(const char *key, const void *data, const int len);
 
+Config_Value_Type config_get_value_type(const char *key);
 char *		config_get_value_string(const char *key);
 void *		config_get_value_data(const char *key, int *len);
 int		config_get_value_integer(const char *key);
-void *		config_get_value_data(const char *key, int *len);
+float		config_get_value_float(const char *key);
 
 int		config_load_file(const char *filename);
 int		config_write_file(const char *filename);
