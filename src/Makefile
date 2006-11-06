@@ -3,7 +3,7 @@ CFLAGS	:= -ggdb -Wall
 
 # No need to touch stuff beyond this point (hopefully)
 PKG_PATH := /usr/local/lib/pkgconfig
-PKG_DEPS := "libnotify gtk+-2.0"
+PKG_DEPS := "libnotify"
 
 PACKAGE	:= music-notify
 PO_DIR	:= ./po
